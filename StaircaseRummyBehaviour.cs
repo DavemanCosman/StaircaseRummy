@@ -132,16 +132,21 @@ namespace FreeCell
         /// The players turn ends if they place a card here. Traditionally up to 3 cards only.
         /// </summary>
         #region JunkPiles
-        public List<Deck> SJunk;
-        public List<Deck> WJunk;
-        public List<Deck> NJunk;
-        public List<Deck> EJunk;
+        public List<Deck> Sjunk;
+        public List<Deck> Wjunk;
+        public List<Deck> Njunk;
+        public List<Deck> Ejunk;
         #endregion
 
         /// <summary>
-        /// The list of play cells. This list will be filled by the game start when the decks are created.
+        /// The list of play cells. This list will be filled as cards are played.
         /// </summary>
-        public List<Deck> PlayCells;
+        #region PlayCells
+        public List<Deck> SplayCell;
+        public List<Deck> NplayCell; // A -> K
+        public List<Deck> EplayCell;
+        public List<Deck> WplayCell; // K -> A
+        #endregion
         #endregion
 
         public StaircaseRummyBehavior()
@@ -154,6 +159,8 @@ namespace FreeCell
             StartCoroutine(NewGame(Seed));
         }
 
+        #region UpdateAuto
+        // Modify the right click or rid it altoghether
         void Update()
         {
             if (Input.GetMouseButtonDown(1)) // right click
@@ -169,6 +176,7 @@ namespace FreeCell
             if (!isAutocompleteRunning)
                 StartCoroutine(CheckForFoundationMoves(onlySafe));
         }
+        #endregion
 
         /// <summary>
         /// Force the game to be won. Call this directly to test the win functionality.
@@ -183,6 +191,38 @@ namespace FreeCell
             if (OnWin != null)
                 OnWin();
         }
+        
+        public void ClearStaircases()
+        {
+            Sstaircase.Clear();
+            Wstaircase.Clear();
+            Nstaircase.Clear();
+            Estaircase.Clear();
+        }
+
+        public void ClearHands()
+        {
+            ShandCards.Clear();
+            WhandCards.Clear();
+            NhandCards.Clear();
+            EhandCards.Clear();
+        }
+
+        public void ClearJunk()
+        {
+            Sjunk.Clear();
+            Wjunk.Clear();
+            Njunk.Clear();
+            Ejunk.Clear();
+        }
+
+        public void ClearPlayCells()
+        {
+            SplayCell.Clear();
+            WplayCell.Clear();
+            NplayCell.Clear();
+            EplayCell.Clear();
+        }
 
         /// <summary>
         /// Sets up the game and creates a new deal based on the given seed.
@@ -192,16 +232,13 @@ namespace FreeCell
             yield return new WaitForEndOfFrame(); // to give itween a chance to avoid it's initalization bug.
 
             GetComponent<AudioSource>().Play();
-
             HasWon = false;
 
-            foreach (var card in FindObjectsOfType<Card>())
-            {
+            foreach (var card in FindObjectsOfType<Card>()) {
                 Destroy(card.gameObject);
             }
 
-            foreach (var deck in FindObjectsOfType<Deck>())
-            {
+            foreach (var deck in FindObjectsOfType<Deck>()) {
                 if (deck != Dealer)
                     Destroy(deck.gameObject);
             }
@@ -211,7 +248,7 @@ namespace FreeCell
             Moves = new Stack<Move>();
             redoMoves = new Stack<Move>();
 
-            FreeCells.Clear();
+            ClearStaircases();
             for (int i = 0; i < Cells; i++)
             {
                 CreateFreeCell();
