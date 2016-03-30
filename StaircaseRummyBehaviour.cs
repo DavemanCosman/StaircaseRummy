@@ -12,6 +12,7 @@ namespace FreeCell
     /// </summary>
     public class StaircaseRummyBehavior : MonoBehaviour
     {
+        #region Constants
         /// <summary>
         /// The max amount of players. For best results, keep this number between 2 and 4.
         /// </summary>
@@ -32,20 +33,21 @@ namespace FreeCell
         /// The max amount of decks being used.
         /// Keep it at this value for best results.
         /// </summary>
-        public const int MaxPlayingDecks = StairCells/2;
+        public const int PlayingDecks = StairCells/2;
 
         /// <summary>
         /// The max amount of discard cells.
-        /// For best results, keep this number odd.
         /// </summary>
         public const int MaxJunkCells = 3;
+        #endregion
+
+        #region GameValues
+        public static StaircaseRummyBehavior Instance;
 
         /// <summary>
         /// The max cards in a players staircase pile. For best results, keep this number odd.
         /// </summary>
-        public const int MaxStaircaseStack = 13;
-
-        public static StaircaseRummyBehavior Instance;
+        public static int MaxStaircaseStack = 13;
 
         /// <summary>
         /// Random number seed used to shuffle the cards.
@@ -56,7 +58,7 @@ namespace FreeCell
         /// Number of suits that the player will be dealt. Traditionally this is four suits for a normal deck of cards.
         /// Staircase Rummy uses two decks, so a total of 8 suits are used.
         /// </summary>
-        public static int Suits = 8;
+        public static int Suits = 4 * PlayingDecks;
 
         /// <summary>
         /// Sets the distance between the cards for each play deck. Adjust this to suit your card faces.
@@ -64,103 +66,11 @@ namespace FreeCell
         public float PlayStackVerticalSpace = -0.5f;
 
         /// <summary>
-        /// The list of hand cards for South player.
-        /// This is filled automatically by the game at the start.
-        /// </summary>
-        public List<Deck> SouthHandCards;
-
-        /// <summary>
-        /// The stack of cards for South player.
-        /// This is filled automatically by the game at the start.
-        /// </summary>
-        public Stack<Deck> SouthStaircaseStack;
-
-        /// <summary>
-        /// The list of South cards for East player.
-        /// Equivalent of discarding a card. The players turn ends if they place a card here.
-        /// </summary>
-        public List<Deck> SouthJunk;
-
-        /// <summary>
-        /// The list of hand cards for West player.
-        /// This is filled automatically by the game at the start.
-        /// The top card is always face up. All players can see this.
-        /// </summary>
-        public List<Deck> WestHandCards;
-
-        /// <summary>
-        /// The stack of cards for West player.
-        /// This is filled automatically by the game at the start.
-        /// The top card is always face up. All players can see this.
-        /// </summary>
-        public Stack<Deck> WestStaircaseStack;
-
-        /// <summary>
-        /// The list of Junk cards for West player.
-        /// Equivalent of discarding a card. The players turn ends if they place a card here.
-        /// </summary>
-        public List<Deck> WestJunk;
-
-        /// <summary>
-        /// The list of hand cards for North player.
-        /// This is filled automatically by the game at the start.
-        /// </summary>
-        public List<Deck> NorthHandCards;
-
-        /// <summary>
-        /// The stack of cards for North player.
-        /// This is filled automatically by the game at the start.
-        /// The top card is always face up. All players can see this.
-        /// </summary>
-        public Stack<Deck> NorthStaircaseStack;
-
-        /// <summary>
-        /// The list of Junk cards for North player.
-        /// Equivalent of discarding a card. The players turn ends if they place a card here.
-        /// </summary>
-        public List<Deck> NorthJunk;
-
-        /// <summary>
-        /// The list of hand cards for East player.
-        /// This is filled automatically by the game at the start.
-        /// </summary>
-        public List<Deck> EastHandCards;
-
-        /// <summary>
-        /// The stack of cards for East player.
-        /// This is filled automatically by the game at the start.
-        /// The top card is always face up. All players can see this.
-        /// Playing all cards in this stack wins the game.
-        /// </summary>
-        public Stack<Deck> EastStaircaseStack;
-
-        /// <summary>
-        /// The list of Junk cards for East player.
-        /// Equivalent of discarding a card. The players turn ends if they place a card here.
-        /// </summary>
-        public List<Deck> EastJunk;
-
-        /// <summary>
-        /// The list of play cells. This list will be filled by the game start when the decks are created.
-        /// </summary>
-        public List<Deck> PlayCells;
-
-        /// <summary>
-        /// The list of goal cells. This list will be filled by the game start when the decks are created.
-        /// </summary>
-        public List<Deck> GoalCells;
-
-        /// <summary>
-        /// The list of cards from the drawing deck.
-        /// Drawing is done automatically at the end of each turn.
-        /// </summary>
-        public Deck Dealer;
-
-        /// <summary>
         /// True if the game has been won.
         /// </summary>
         public bool HasWon;
 
+        #region Moves
         /// <summary>
         /// Maintains the list of moves for the undo system.
         /// </summary>
@@ -169,12 +79,9 @@ namespace FreeCell
         Stack<Move> redoMoves = new Stack<Move>();
         bool isRedoing;
         bool isAutocompleteRunning;
+        #endregion
 
-        /// <summary>
-        /// Time that the game started. Use to calcuate play time.
-        /// </summary>
-        public float StartTime;
-
+        #region Actions
         /// <summary>
         /// Called when the game is won. Play your victory screen from here.
         /// </summary>
@@ -184,8 +91,60 @@ namespace FreeCell
         /// This is called when a card dragable flag is changed.
         /// </summary>
         public Action<Card, bool> OnCardDragableUpdate;
+        #endregion
 
-        public FreeCellBehavior()
+        /// <summary>
+        /// Time that the game started. Use to calcuate play time.
+        /// </summary>
+        public float StartTime;
+        #endregion
+
+        #region Decks
+        /// <summary>
+        /// The list of cards from the drawing deck. Drawing is done automatically at the end of each turn.
+        /// </summary>
+        public Deck Dealer;
+
+        /// <summary>
+        /// The Staircase (Goal) stack of cards for S, W, N and E players.
+        /// This is filled automatically by the game at the start. Top card is displayed.
+        /// </summary>
+        #region StaircaseStacks
+        public Stack<Deck> Sstaircase;
+        public Stack<Deck> Wstaircase;
+        public Stack<Deck> Nstaircase;
+        public Stack<Deck> Estaircase;
+        #endregion
+
+        /// <summary>
+        /// The list of hand cards for South (S), West (W), North (N) and East (E) players.
+        /// Filled automatically by the game at the start, and whenthe player ends their turn by discarding. 
+        /// </summary>
+        #region HandCards
+        public List<Deck> ShandCards;
+        public List<Deck> WhandCards;
+        public List<Deck> NhandCards;
+        public List<Deck> EhandCards;
+        #endregion
+
+        /// <summary>
+        /// The Junk (Discard) pile of cards for S, W, N and E players.
+        /// The players turn ends if they place a card here. Traditionally up to 3 cards only.
+        /// </summary>
+        #region JunkPiles
+        public List<Deck> SJunk;
+        public List<Deck> WJunk;
+        public List<Deck> NJunk;
+        public List<Deck> EJunk;
+        #endregion
+
+        /// <summary>
+        /// The list of play cells. This list will be filled by the game start when the decks are created.
+        /// </summary>
+        public List<Deck> PlayCells;
+        #endregion
+
+        public StaircaseRummyBehavior()
         {
             Instance = this;
         }

@@ -20,23 +20,10 @@ namespace FreeCell
 
             if (GUI.Button(new Rect(70, Screen.height - 60, 90, 50), "New Game"))
             {
-                FreeCellBehavior.Cells = 4;
-                FreeCellBehavior.Suits = 8;
-                FreeCellBehavior.Stacks = 8;
-                FreeCellBehavior.Instance.StartCoroutine(FreeCellBehavior.Instance.NewGame(UnityEngine.Random.Range(1, 20000)));
+                StaircaseRummyBehavior.MaxStaircaseStack = 9;
+                StaircaseRummyBehavior.Suits = 8;
+                StaircaseRummyBehavior.Instance.StartCoroutine(StaircaseRummyBehavior.Instance.NewGame(UnityEngine.Random.Range(1, 20000)));
             }
-        }
-
-        // Use this for initialization
-        void Start()
-        {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
         }
     }
 }
