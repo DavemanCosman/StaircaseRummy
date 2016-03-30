@@ -42,8 +42,8 @@ namespace FreeCell
     public enum DeckType
     {
         Hand,
-        Staircase,
-        Junk,
+        Stack,
+        Discard,
         Play,
         Dealer,
         OffScreen
