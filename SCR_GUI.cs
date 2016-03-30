@@ -21,7 +21,7 @@ namespace FreeCell
             if (GUI.Button(new Rect(70, Screen.height - 60, 90, 50), "New Game"))
             {
                 FreeCellBehavior.Cells = 4;
-                FreeCellBehavior.Suits = 4;
+                FreeCellBehavior.Suits = 8;
                 FreeCellBehavior.Stacks = 8;
                 FreeCellBehavior.Instance.StartCoroutine(FreeCellBehavior.Instance.NewGame(UnityEngine.Random.Range(1, 20000)));
             }

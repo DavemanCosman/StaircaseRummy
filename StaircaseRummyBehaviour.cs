@@ -43,7 +43,7 @@ namespace FreeCell
         /// <summary>
         /// The max cards in a players staircase pile. For best results, keep this number odd.
         /// </summary>
-        public const int MaxStaircaseStackCards = 13;
+        public const int MaxStaircaseStack = 13;
 
         public static StaircaseRummyBehavior Instance;
 
@@ -54,8 +54,9 @@ namespace FreeCell
 
         /// <summary>
         /// Number of suits that the player will be dealt. Traditionally this is four suits for a normal deck of cards.
+        /// Staircase Rummy uses two decks, so a total of 8 suits are used.
         /// </summary>
-        public static int Suits = 4;
+        public static int Suits = 8;
 
         /// <summary>
         /// Sets the distance between the cards for each play deck. Adjust this to suit your card faces.

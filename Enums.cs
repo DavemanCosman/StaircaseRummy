@@ -39,13 +39,23 @@ namespace FreeCell
     }
 
     [Serializable]
-    [Flags]
     public enum DeckType
     {
+        Hand,
+        Staircase,
+        Junk,
+        Play,
         Dealer,
-        Free,
-        Goal,
-        Play
+        OffScreen
+    }
+
+    [Serializable]
+    public enum PlayerType
+    {
+        South = 1,
+        West,
+        North,
+        East
     }
 
     [Serializable]
